@@ -10,11 +10,11 @@ class SpellChecker(object):
             f = f.read().split('\n')
             self.frequencies = {}
             for row in f:
-                row = row.split(',')
-                self.frequencies[row[0]] = row[1]
+                word, freq = row.split(',')
+                self.frequencies[word] = freq
         for word in self.dictionary:
             if word not in self.frequencies:
-                self.frequencies[word] = 1
+                self.frequencies[word] = '1'
 
     def spell_check_message(self, message):
         words = re.findall("\w+'*\w+", message)
@@ -41,7 +41,8 @@ class SpellChecker(object):
 
             return False, correct_word
 
-    def get_pos_words(self, word):
+    def get_pos_words(self, word, steps=1):
+        if steps == 0: return []
         words = []
         splits = [(word[:i], word[i:]) for i in range(len(word)+1)]
         for first, last in splits:
@@ -52,6 +53,8 @@ class SpellChecker(object):
             delete = [first[:-1] + last] if first else []
             [words.extend(edit) for edit in [inserts, transpose, \
                                              replace, delete]]
+        for word in set(words):
+            words.extend(self.get_pos_words(word, steps-1))
         return set(words)
 
 def test():
