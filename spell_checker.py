@@ -1,5 +1,6 @@
 import string
 import random
+import re
 
 class SpellChecker(object):
     def __init__(self, dict_file='sowpods.txt', freq_file='word_frequences.csv'):
@@ -14,6 +15,14 @@ class SpellChecker(object):
         for word in self.dictionary:
             if word not in self.frequencies:
                 self.frequencies[word] = 1
+
+    def spell_check_message(self, message):
+        words = re.findall("\w+'*\w+", message)
+        for word in words:
+            correct, correct_spelling = self.spell_check(word)
+            if not correct:
+                message = message.replace(word, correct_spelling)
+        return message
 
     def spell_check(self, word):
         if word in self.dictionary:
