@@ -19,27 +19,37 @@ class SpellChecker(object):
     def spell_check_message(self, message):
         words = re.findall("\w+'*\w+", message)
         for word in words:
-            correct, correct_spelling = self.spell_check(word)
+            correct, correct_spelling = self.spell_check(word, autocorrect=True)
             if not correct:
                 message = message.replace(word, correct_spelling)
         return message
 
-    def spell_check(self, word):
+    def spell_check(self, word, autocorrect=False):
         if word in self.dictionary:
             return True, word
-        elif "'" in word:
-            return True, word
+        # don't check words with punctuation
+        elif re.search("\W", word):
+            return False, word
         else:
             pos_words = list(self.get_pos_words(word))
-            if pos_words:
-                frequent_words = [(word, self.frequencies[word]) for word in pos_words \
-                                  if word in self.frequencies]
-                correct_word = max(frequent_words, key=lambda x: int(x[1]))[0] \
-                               if frequent_words else word
-            else:
-                correct_word = word
+            frequent_words = [(w, self.frequencies[w]) for w in pos_words \
+                              if w in self.frequencies]
+            sorted_words = sorted(frequent_words, key=lambda x: int(x[1]), reverse=True)
+            if not sorted_words:
+                return False, word
+            if autocorrect:
+                correct_word = sorted_words[0][0]
+                return False, correct_word
+            return False, sorted_words
 
-            return False, correct_word
+    def give_pos_words(self, word):
+        correct, pos_words = self.spell_check(word)
+        if correct:
+            return "%s is a valid word" % word
+        elif pos_words == word:
+            return "There were no word suggestions for %s" % word
+        else:
+            return "Suggestions for %s: %s" % (word, ", ".join(word[0] for word in pos_words))
 
     def get_pos_words(self, word, steps=1):
         if steps == 0: return []
@@ -68,10 +78,11 @@ def test():
     num_correct = 0.0
     num_incorrect = 0
     for correct, word in incorrect_words:
-        if not s.spell_check(word) == (False, correct):
+        if not s.spell_check(word, autocorrect=True) == (False, correct):
             num_incorrect += 1
         else:
             num_correct += 1
+        print s.give_pos_words(word)
         print num_correct + num_incorrect
     print num_correct / (num_correct+num_incorrect)
     correct_words = []
