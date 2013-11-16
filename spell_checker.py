@@ -3,7 +3,7 @@ import random
 import re
 
 class SpellChecker(object):
-    def __init__(self, dict_file='sowpods.txt', freq_file='word_frequences.csv'):
+    def __init__(self, dict_file='sowpods.txt', freq_file='combined_freqs.csv'):
         with open(dict_file) as f:
             self.dictionary = f.read().lower().split()
         with open('word_frequencies.csv') as f:
@@ -42,7 +42,7 @@ class SpellChecker(object):
                 return False, correct_word
             return False, sorted_words
 
-    def give_pos_words(self, word):
+    def suggested_words(self, word):
         correct, pos_words = self.spell_check(word)
         if correct:
             return "%s is a valid word" % word
@@ -82,7 +82,7 @@ def test():
             num_incorrect += 1
         else:
             num_correct += 1
-        print s.give_pos_words(word)
+        print s.suggested_words(word)
         print num_correct + num_incorrect
     print num_correct / (num_correct+num_incorrect)
     correct_words = []
