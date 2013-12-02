@@ -3,10 +3,11 @@ import random
 import re
 
 class SpellChecker(object):
-    def __init__(self, dict_file='sowpods.txt', freq_file='combined_freqs.csv'):
+    def __init__(self, dict_file='wordFrequencies/sowpods.txt', \
+                 freq_file='wordFrequencies/combined_freqs.csv'):
         with open(dict_file) as f:
             self.dictionary = f.read().lower().split()
-        with open('word_frequencies.csv') as f:
+        with open('wordFrequencies/word_frequencies.csv') as f:
             f = f.read().split('\n')
             self.frequencies = {}
             for row in f:
@@ -70,7 +71,7 @@ class SpellChecker(object):
 def test():
     s = SpellChecker()
     incorrect_words = []
-    with open("spelldata.csv") as f:
+    with open("wordFrequencies/spelldata.csv") as f:
         f = f.read().split()
         for row in f:
             words = row.split(",")
