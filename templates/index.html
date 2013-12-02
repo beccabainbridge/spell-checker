@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Spell Checker</title>
+  </head>
+  <body>
+    <h4>Spell Checker</h4>
+    <form action='' method='post'>
+      Enter word:<input type='text' name='word'>
+      <input type='submit' name='button' value="Spell Check Word">
+      <br>
+      {% if word %}
+      <p>{{word}}</p>
+      {% endif %}
+      <br><br>
+      Enter text: <br>
+      <textarea name='text' rows='5' cols='25'></textarea>
+      <br>
+      <input type='submit' name='button' value="Spell Check Message">
+    </form>
+    {% if message %}
+    <p>Spell checked message: {{message}}</p>
+    {% endif %}
+  </body>
+</html>
