@@ -19,4 +19,4 @@ def main():
     return render_template("index.html", message=spell_checked_message, word=spell_checked_word)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
